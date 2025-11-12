@@ -1,9 +1,9 @@
 {
-  "name": "meimei_ui_vue3",
-  "version": "1.0.0",
-  "description": "槑槑管理系统",
+  "name": "v3-admin",
+  "version": "0.0.1",
+  "description": "管理系统",
   "license": "MIT",
-  "author": "槑槑",
+  "author": "荣",
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS='--max-old-space-size=4096' VITE_BUILD_HASH=$(node scripts/get-build-hash.js) vite build --mode development",
@@ -104,6 +104,5 @@
     "vite-plugin-svg-icons": "2.0.1",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-vue-devtools": "^7.6.4"
-  },
-  "packageManager": "yarn@4.5.1"
+  }
 }
