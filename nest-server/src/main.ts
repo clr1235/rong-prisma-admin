@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +20,9 @@ async function bootstrap() {
   // 开启全局跨域
   app.enableCors();
 
-  await app.listen(process.env.PORT ?? 3000);
+  // 获取配置服务
+  const configService = app.get(ConfigService);
+  const port = configService.get('port') as number;
+  await app.listen(port);
 }
 void bootstrap();

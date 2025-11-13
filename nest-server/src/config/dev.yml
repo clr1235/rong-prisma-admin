@@ -1,0 +1,46 @@
+# 数据库配置
+db:
+  mysql:
+    url: 'mysql://root:clr021403@localhost:3307/rong-prisma-admin'
+    host: 'localhost'
+    port: 3307
+    username: 'root'
+    password: 'clr021403'
+    database: 'rong-prisma-admin'
+    charset: 'utf8mb4'
+    logger: 'file'
+    logging: true
+    multipleStatements: true
+    dropSchema: false
+    synchronize: true
+    supportBigNumbers: true
+    bigNumberStrings: true
+
+# 权限 白名单配置
+perm:
+  router:
+    whitelist: [
+        # { path: '/captchaImage', method: 'GET' },
+        # { path: '/registerUser', method: 'GET' },
+        { path: '/api/user/register', method: 'POST' },
+        { path: '/api/user/login', method: 'POST' },
+        { path: '/api/user/logout', method: 'POST' },
+        # { path: '/perm/{id}', method: 'GET' },
+        # { path: '/upload', method: 'POST' },
+      ]
+
+# jwt 配置
+jwt:
+  secretkey: 'rong-prisma-admin'
+  expiresin: '1h'
+  refreshExpiresIn: '2h'
+
+# redis 配置
+redis:
+  host: 'localhost'
+  port: 6379
+  db: 0
+  keyPrefix: ''
+
+# 启动端口
+port: 3000
