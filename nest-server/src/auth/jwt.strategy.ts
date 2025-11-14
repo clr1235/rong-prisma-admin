@@ -2,16 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { jwtConstants } from './contants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  /**
+   * 这里的构造函数向父类传递了授权时必要的参数，在实例化时，父类会得知授权时，客户端的请求必须使用 Authorization 作为请求头，
+   * 而这个请求头的内容前缀也必须为 Bearer，在解码授权令牌时，使用秘钥 secretOrKey: 'secretKey' 来将授权令牌解码为创建令牌时的 payload。
+   */
   constructor(private readonly config: ConfigService) {
+    const secretkey = config.get('jwt.secretkey');
     // 初始化 JWT 策略
     super({
+      // 从请求头中使用 Authorization 字段提取 JWT，并且期望格式为 Bearer 。
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      // ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      // 不忽略 JWT 的过期时间，即如果令牌过期，将被视为无效。
+      // ignoreExpiration：false,
+
+      // 验证 JWT 的密钥
+      secretOrKey: secretkey,
     });
   }
 
