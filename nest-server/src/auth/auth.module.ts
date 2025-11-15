@@ -16,10 +16,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     // 异步注册JwtModule
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('jwt.secretkey'),
-        signOptions: { expiresIn: configService.get('jwt.expiresIn') },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get('jwt.secretkey'),
+          signOptions: { expiresIn: configService.get('jwt.expiresIn') },
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
