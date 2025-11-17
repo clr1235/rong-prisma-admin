@@ -8,10 +8,12 @@ import { JwtStrategy } from './jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [
     UsersModule,
+    SharedModule,
     PassportModule,
     // 异步注册JwtModule
     JwtModule.registerAsync({

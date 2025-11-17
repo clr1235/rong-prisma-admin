@@ -20,7 +20,7 @@ db:
 perm:
   router:
     whitelist: [
-        # { path: '/captchaImage', method: 'GET' },
+        { path: '/api/auth/captchaImage', method: 'GET' },
         # { path: '/registerUser', method: 'GET' },
         { path: '/api/user/register', method: 'POST' },
         { path: '/api/user/login', method: 'POST' },
@@ -40,6 +40,7 @@ redis:
   host: 'localhost'
   port: 6379
   db: 0
+  captchaImgKey: 'captcha:img'
   keyPrefix: ''
 
 # 启动端口
