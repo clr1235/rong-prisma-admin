@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import sharp from 'sharp';
 import { UsersService } from 'src/users/users.service';
 import * as svgCaptcha from 'svg-captcha';
 import { RedisService } from 'nestjs-redis-cluster';
@@ -26,7 +27,7 @@ export class AuthService {
   }
 
   // 创建图片验证码
-  async createImageCaptcha() {
+  async createImageCaptcha(type) {
     const { data, text } = svgCaptcha.createMathExpr({
       size: 4, //验证码长度
       ignoreChars: '0o1i', // 验证码字符中排除 0o1i
@@ -36,8 +37,16 @@ export class AuthService {
       width: 115.5,
       height: 38,
     });
+
+    let img = data.toString();
+    if (type === 'base64') {
+      const pngBuffer = await sharp(Buffer.from(data)).png().toBuffer();
+      img = pngBuffer.toString('base64');
+    }
+
     const result = {
-      img: data.toString(),
+      img,
+      type,
       uuid: this.sharedService.generateUUID(),
     };
     await this.redisService

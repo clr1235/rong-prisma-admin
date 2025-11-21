@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ResImageCaptchaDto } from './dto';
 
@@ -8,8 +15,10 @@ export class AuthController {
 
   /* 获取图片验证码 */
   @Get('captchaImage')
-  async captchaImage(): Promise<ResImageCaptchaDto> {
-    return await this.authService.createImageCaptcha();
+  async captchaImage(
+    @Query('type') type: 'svg' | 'base64' = 'svg',
+  ): Promise<ResImageCaptchaDto> {
+    return await this.authService.createImageCaptcha(type);
   }
 
   @Post('login')

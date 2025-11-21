@@ -4,4 +4,6 @@ export class ResImageCaptchaDto {
 
   /* uuid码 */
   uuid: string;
+
+  type: 'svg' | 'base64';
 }

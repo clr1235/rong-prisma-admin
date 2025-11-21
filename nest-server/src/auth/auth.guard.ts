@@ -27,24 +27,34 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(ctx: ExecutionContext) {
     const isInWhiteList = this.checkWhiteList(ctx);
     if (isInWhiteList) {
-      await this.jumpActivate(ctx);
       console.log('白名单路由跳过验证');
       return true;
     }
 
     // 接口路由判断是否有token
     const req = ctx.switchToHttp().getRequest();
-    const accessToken = req.get('Authorization');
+    const rawToken = req.get('Authorization') || '';
+    const token = rawToken.replace(/^Bearer\s+/i, '');
 
-    if (!accessToken) {
+    if (!token) {
       throw new ForbiddenException('请重新登录');
     }
-    const atUserId = await this.authService.parseToken(accessToken);
-    if (!atUserId) {
+    // 手动解析token
+    const userId = await this.authService.parseToken(token);
+    if (!userId) {
       throw new UnauthorizedException('当前登录已过期，请重新登录');
     }
-
+    // 调用jwt的验证流程
     return this.activate(ctx);
+  }
+
+  handleRequest(err, user, info) {
+    console.log(err, 'err====', info, 'user====', user);
+    // You can throw an exception based on either "info" or "err" arguments
+    if (err || !user) {
+      throw err || new UnauthorizedException('token无效或已过期');
+    }
+    return user;
   }
 
   async activate(ctx: ExecutionContext) {

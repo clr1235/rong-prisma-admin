@@ -47,9 +47,9 @@ export function logout() {
 }
 
 // 获取验证码
-export function getCodeImg() {
+export function getCodeImg(params={type:'svg'}) {
   return request({
-    url: '/auth/captchaImage',
+    url: `/auth/captchaImage?type=${params.type}`,
     headers: {
       isToken: false,
     },

@@ -124,7 +124,7 @@ function handleRegister() {
         })
         .catch(() => {
           loading.value = false
-          if (captchaEnabled) {
+          if (captchaEnabled.value) {
             getCode()
           }
         })
@@ -133,7 +133,7 @@ function handleRegister() {
 }
 
 function getCode() {
-  getCodeImg().then((res) => {
+  getCodeImg({ type: 'base64' }).then((res) => {
     captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
     if (captchaEnabled.value) {
       codeUrl.value = 'data:image/gif;base64,' + res.img
