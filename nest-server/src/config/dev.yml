@@ -43,5 +43,9 @@ redis:
   captchaImgKey: 'captcha:img'
   keyPrefix: ''
 
-# 启动端口
-port: 3000
+# nest启动时的相关配置
+nestconf:
+  port: 3000
+  globalPrefix: 'api'
+  enableCorsmethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+  enableCorsAllowedHeaders: ['Content-Type', 'Authorization', 'Accept']

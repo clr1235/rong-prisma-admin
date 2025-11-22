@@ -5,9 +5,11 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // 获取配置服务
+  const configService = app.get(ConfigService);
 
   // 设置全局路由前缀
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix(configService.get('nestconf.globalPrefix') as string);
   // web 安全，防常见漏洞
   // 注意： 开发环境如果开启 nest static module 需要将 crossOriginResourcePolicy 设置为 false 否则 静态资源 跨域不可访问
   app.use(
@@ -18,11 +20,14 @@ async function bootstrap() {
     }),
   );
   // 开启全局跨域
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+    methods: configService.get('nestConf.enableCorsmethods'), // 明确允许方法
+    allowedHeaders: configService.get('nestConf.enableCorsAllowedHeaders'), // 按需配置允许的请求头
+  });
 
-  // 获取配置服务
-  const configService = app.get(ConfigService);
-  const port = configService.get('port') as number;
+  const port = configService.get('nest.port') as number;
   await app.listen(port);
 }
 void bootstrap();
