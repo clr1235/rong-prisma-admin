@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './jwt.strategy';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { SharedModule } from 'src/shared/shared.module';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { AuthService } from './auth.service';
+import { AuthController } from './controllers/auth.controller';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -28,14 +28,6 @@ import { SharedModule } from 'src/shared/shared.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    // 将 JwtAuthGuard 注册为全局守卫
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

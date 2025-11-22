@@ -1,3 +1,12 @@
+/**
+ * JwtStrategy 策略要求：api路由请求中必须包含有效的jwt来保护路由.
+ * 
+ * JwtStrategy 负责：
+    拦截 header 中的 Authorization: Bearer xxx
+    校验 token 是否有效
+    校验完把 user 信息挂到 req.user（给后续 controller 用）
+    👉 它是负责 “登陆后的所有请求都要靠它守卫”
+ */
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -16,8 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // 从请求头中使用 Authorization 字段提取 JWT，并且期望格式为 Bearer 。
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       // 不忽略 JWT 的过期时间，即如果令牌过期，将被视为无效。
-      // ignoreExpiration：false,
-
+      ignoreExpiration: false,
       // 验证 JWT 的密钥
       secretOrKey: secretkey,
     });
@@ -29,6 +37,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * 当用户不存在时，说明令牌有误，可能是被伪造了，此时需抛出 UnauthorizedException 未授权异常。
    * 当用户存在时，会将 user 对象添加到 req 中，在之后的 req 对象中，可以使用 req.user 获取当前登录用户。
    */
+  // Passport 会根据 validate() 方法的返回值构建 user 对象，并将其附加到 Request 对象上。
   async validate(payload: any) {
     return { userId: payload.sub, username: payload.username };
   }
