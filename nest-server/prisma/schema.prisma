@@ -11,4 +11,121 @@ generator client {
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SysUser {
+  userId      Int       @id @default(autoincrement())
+  avatar      String?   @default("") @db.VarChar(100)
+  createBy    String?   @default("") @db.VarChar(64)
+  createTime  DateTime?
+  delFlag     String?   @default("0") @db.Char(1)
+  deptId      Int?
+  email       String?   @default("") @db.VarChar(50)
+  loginDate   DateTime?
+  loginIp     String?   @default("") @db.VarChar(128)
+  nickName    String    @db.VarChar(30)
+  password    String?   @default("") @db.VarChar(100)
+  phonenumber String?   @default("") @db.VarChar(11)
+  remark      String?   @db.VarChar(500)
+  sex         String?   @default("0") @db.Char(1)
+  status      String?   @default("0") @db.Char(1)
+  updateBy    String?   @default("") @db.VarChar(64)
+  updateTime  DateTime?
+  userName    String    @unique @db.VarChar(30)
+  userType    String?   @default("00") @db.VarChar(2)
+  dept        SysDept?  @relation(fields: [deptId], references: [deptId])
+  posts       SysPost[] @relation("sys_post_to_sys_user")
+  roles       SysRole[] @relation("sys_role_to_sys_user")
+
+  @@index([deptId], map: "sys_user_deptId_fkey")
+  @@map("sys_user")
+}
+
+model SysRole {
+  roleId            Int       @id @default(autoincrement())
+  createBy          String?   @default("") @db.VarChar(64)
+  createTime        DateTime?
+  dataScope         String?   @default("4") @db.Char(4)
+  delFlag           String?   @default("0") @db.Char(1)
+  deptCheckStrictly Boolean?  @default(true)
+  menuCheckStrictly Boolean?  @default(true)
+  remark            String?   @db.VarChar(500)
+  roleKey           String    @db.VarChar(100)
+  roleName          String    @db.VarChar(30)
+  roleSort          Int
+  status            String    @db.Char(1)
+  updateBy          String?   @default("") @db.VarChar(64)
+  updateTime        DateTime?
+  depts             SysDept[] @relation("sys_dept_to_sys_role")
+  menus             SysMenu[] @relation("sys_menu_to_sys_role")
+  users             SysUser[] @relation("sys_role_to_sys_user")
+
+  @@map("sys_role")
+}
+
+model SysMenu {
+  menuId     Int       @id @default(autoincrement())
+  menuName   String    @db.VarChar(50)
+  parentId   Int?
+  parentMenu SysMenu?  @relation("menuParentMenu", fields: [parentId], references: [menuId])
+  childMenu  SysMenu[] @relation("menuParentMenu")
+  orderNum   Int?      @default(0)
+  path       String?   @default("") @db.VarChar(200)
+  component  String?   @db.VarChar(255)
+  query      String?   @db.VarChar(255)
+  isFrame    String?   @default("1") @db.Char(1)
+  isCache    String?   @default("0") @db.Char(1)
+  menuType   String?   @default("") @db.Char(1)
+  visible    String?   @default("0") @db.Char(1)
+  status     String?   @default("0") @db.Char(1)
+  perms      String?   @db.VarChar(100)
+  icon       String?   @default("#") @db.VarChar(100)
+  createBy   String?   @default("") @db.VarChar(64)
+  createTime DateTime?
+  updateBy   String?   @default("") @db.VarChar(64)
+  updateTime DateTime?
+  remark     String?   @default("") @db.VarChar(500)
+  roles      SysRole[] @relation("sys_menu_to_sys_role")
+
+  @@map("sys_menu")
+}
+
+model SysDept {
+  deptId     Int       @id @default(autoincrement())
+  parentId   Int?
+  parentDept SysDept?  @relation("deptParentDept", fields: [parentId], references: [deptId])
+  childDept  SysDept[] @relation("deptParentDept")
+  ancestors  String    @default("") @db.VarChar(50)
+  deptName   String?   @default("") @db.VarChar(30)
+  orderNum   Int?      @default(0)
+  leader     String?   @db.VarChar(20)
+  phone      String?   @db.VarChar(11)
+  email      String?   @db.VarChar(50)
+  status     String?   @default("0") @db.Char(1)
+  delFlag    String?   @default("0") @db.Char(1)
+  createBy   String?   @default("") @db.VarChar(64)
+  createTime DateTime?
+  updateBy   String?   @default("") @db.VarChar(64)
+  updateTime DateTime?
+  users      SysUser[]
+  roles      SysRole[] @relation("sys_dept_to_sys_role")
+
+  @@map("sys_dept")
+}
+
+model SysPost {
+  postId     Int       @id @default(autoincrement())
+  postCode   String    @unique @db.VarChar(64)
+  postName   String    @db.VarChar(50)
+  postSort   Int
+  status     String    @db.Char(1)
+  createBy   String?   @default("") @db.VarChar(64)
+  createTime DateTime?
+  updateBy   String?   @default("") @db.VarChar(64)
+  updateTime DateTime?
+  remark     String?   @db.VarChar(500)
+  users      SysUser[] @relation("sys_post_to_sys_user")
+
+  @@map("sys_post")
 }
