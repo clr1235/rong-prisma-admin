@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../../shared/redis/redis.service';
 
 import { SharedService } from 'src/shared/shared.service';
+import { Public } from '../decorators/public.decorator';
 
 @Controller('auth/captcha')
 export class CaptchaController {
@@ -17,6 +18,7 @@ export class CaptchaController {
 
   /* 获取图片验证码 */
   @Get('img')
+  @Public()
   async captchaImage(
     @Query('type') type: 'svg' | 'base64' = 'svg',
   ): Promise<ResImageCaptchaDto> {

@@ -9,6 +9,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthService } from './auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { UsersModule } from 'src/users/users.module';
+import { CaptchaController } from './controllers/captcha.controller';
+import { AccountController } from './controllers/account.controller';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { UsersModule } from 'src/users/users.module';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, CaptchaController, AccountController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
