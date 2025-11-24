@@ -3,7 +3,7 @@ import { ResImageCaptchaDto } from '../dto';
 import * as svgCaptcha from 'svg-captcha';
 import sharp from 'sharp';
 import { ConfigService } from '@nestjs/config';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '../../shared/redis/redis.service';
 
 import { SharedService } from 'src/shared/shared.service';
 
@@ -41,14 +41,7 @@ export class CaptchaController {
       type,
       uuid: this.sharedService.generateUUID(),
     };
-    await this.redisService
-      .getClient()
-      .set(
-        `${this.configService.get('redis.captchaImgKey')}:${result.uuid}`,
-        text,
-        'EX',
-        60 * 5,
-      );
+    await this.redisService.set(text, 'EX', 60 * 5);
     return result;
   }
 }

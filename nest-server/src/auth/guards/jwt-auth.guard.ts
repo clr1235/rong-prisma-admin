@@ -13,16 +13,12 @@ import { IS_PUBLIC_KEY } from '../auth.contants';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  private globalWhiteList = [];
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly config: ConfigService,
   ) {
     super();
-    this.globalWhiteList = [].concat(
-      this.config.get('perm.router.whitelist') || [],
-    );
   }
 
   // 扩展自定义的认证逻辑
