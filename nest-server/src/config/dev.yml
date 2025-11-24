@@ -44,7 +44,7 @@ redis:
   keyPrefix: ''
 
 # nest启动时的相关配置
-nestconf:
+nestConf:
   port: 3000
   globalPrefix: 'api'
   enableCorsmethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
