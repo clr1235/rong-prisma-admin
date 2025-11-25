@@ -7,3 +7,9 @@ export class ResImageCaptchaDto {
 
   type: 'svg' | 'base64';
 }
+
+export class RegisterDto {
+  username: string;
+  password: string;
+  captcha: string;
+}

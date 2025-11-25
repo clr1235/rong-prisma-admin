@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { UsersService } from 'src/users/users.service';
 import { SharedService } from 'src/shared/shared.service';
+import { RegisterDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,11 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  // 注册
+  async register(dto: RegisterDto): Promise<void> {
+    console.log('zhuce===');
   }
 
   /**

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -8,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { RegisterDto } from '../dto';
 
 // 使用passport-local 策略提供的内置 AuthGuard 来装饰路由意味着：只有在用户通过验证后才会调用路由处理程序
 @UseGuards(LocalAuthGuard)
@@ -25,5 +27,10 @@ export class AuthController {
   @Post('logout')
   async logout(@Request() req) {
     return req.logout();
+  }
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto): Promise<void> {
+    await this.authService.register(dto);
   }
 }
