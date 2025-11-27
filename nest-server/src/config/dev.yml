@@ -49,3 +49,8 @@ nestConf:
   globalPrefix: 'api'
   enableCorsmethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
   enableCorsAllowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+
+# 日志配置
+logger:
+  level: 'verbose'
+  maxFiles: 31
