@@ -3,6 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
+import {
+  HttpStatus,
+  UnprocessableEntityException,
+  ValidationPipe,
+} from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +33,27 @@ async function bootstrap() {
     methods: configService.get('nestConf.enableCorsmethods'), // 明确允许方法
     allowedHeaders: configService.get('nestConf.enableCorsAllowedHeaders'), // 按需配置允许的请求头
   });
+
+  // 开启全局验证管道
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // 自动删除未定义的属性
+      // forbidNonWhitelisted: true, // 抛出异常如果存在未定义的属性
+      transform: true, // 自动转换请求体为 DTO 实例
+      transformOptions: { enableImplicitConversion: true }, // 开启隐式转换
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY, // 422 未处理实体
+      stopAtFirstError: true,
+      // 自定义异常工厂，返回 422 状态码和第一个错误消息
+      exceptionFactory: (errors) =>
+        new UnprocessableEntityException(
+          errors.map((e) => {
+            const rule = Object.keys(e.constraints!)[0];
+            const msg = e.constraints![rule];
+            return msg;
+          })[0],
+        ),
+    }),
+  );
 
   const port = configService.get('nestConf.port') as number;
   console.log(port, 'port');
