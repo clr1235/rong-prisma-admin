@@ -1,13 +1,16 @@
 import 'dotenv/config';
+import cluster from 'node:cluster';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
 import {
   HttpStatus,
+  Logger,
   UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common';
+import { LoggerService } from './shared/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -57,6 +60,20 @@ async function bootstrap() {
 
   const port = configService.get('nestConf.port') as number;
   console.log(port, 'port');
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0', async () => {
+    app.useLogger(app.get(LoggerService));
+    const url = await app.getUrl();
+    console.log(url, 'url');
+    const { pid } = process;
+    const env = cluster.isPrimary;
+    const prefix = env ? 'P' : 'W';
+
+    // if (!isMainProcess) return;
+
+    // printSwaggerLog?.();
+
+    const logger = new Logger('NestApplication');
+    logger.log(`[${prefix + pid}] Server running on ${url}`);
+  });
 }
 void bootstrap();
