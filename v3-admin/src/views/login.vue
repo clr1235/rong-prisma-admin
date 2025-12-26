@@ -128,10 +128,12 @@ function handleLogin() {
 
 function getCode() {
   getCodeImg().then((res) => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
+    // res 是 ResOp 对象，实际数据在 res.data 中
+    const data = res.data || res
+    captchaEnabled.value = data.captchaEnabled === undefined ? true : data.captchaEnabled
     if (captchaEnabled.value) {
-      codeUrl.value = res.img
-      loginForm.value.uuid = res.uuid
+      codeUrl.value = data.img
+      loginForm.value.uuid = data.uuid
     }
   })
 }

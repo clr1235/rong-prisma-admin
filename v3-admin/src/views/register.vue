@@ -134,10 +134,12 @@ function handleRegister() {
 
 function getCode() {
   getCodeImg({ type: 'base64' }).then((res) => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
+    // res 是 ResOp 对象，实际数据在 res.data 中
+    const data = res.data || res
+    captchaEnabled.value = data.captchaEnabled === undefined ? true : data.captchaEnabled
     if (captchaEnabled.value) {
-      codeUrl.value = 'data:image/gif;base64,' + res.img
-      registerForm.value.uuid = res.uuid
+      codeUrl.value = 'data:image/png;base64,' + data.img
+      registerForm.value.uuid = data.uuid
     }
   })
 }

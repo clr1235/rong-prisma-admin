@@ -32,7 +32,18 @@ export class TransformInterceptor implements NestInterceptor {
     const request = http.getRequest();
 
     // 处理 query 参数，将数组参数转换为数组,如：?a[]=1&a[]=2 => { a: [1, 2] }
-    request.query = qs.parse(request.url.split('?').at(1));
+    const queryString = request.url.split('?').at(1);
+    if (queryString) {
+      const parsedQuery = qs.parse(queryString);
+      // 合并到现有的 query 对象中，而不是直接替换
+      // 如果 request.query 是只读的，创建一个新对象并替换
+      try {
+        Object.assign(request.query, parsedQuery);
+      } catch (e) {
+        // 如果无法直接赋值，则创建一个新对象
+        request.query = { ...request.query, ...parsedQuery };
+      }
+    }
 
     return next.handle().pipe(
       map((data) => {
