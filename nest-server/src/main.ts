@@ -40,7 +40,7 @@ async function bootstrap() {
   // 开启全局验证管道
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // 自动删除未定义的属性
+      whitelist: true, // DTO中没有验证装饰器的字段，一律删除
       // forbidNonWhitelisted: true, // 抛出异常如果存在未定义的属性
       transform: true, // 自动转换请求体为 DTO 实例
       transformOptions: { enableImplicitConversion: true }, // 开启隐式转换

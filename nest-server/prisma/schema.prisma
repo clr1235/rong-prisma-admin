@@ -15,16 +15,16 @@ datasource db {
 }
 
 model SysUser {
-  userId      Int       @id @default(autoincrement())
+  userId      String    @id @default(dbgenerated("(UUID())")) @db.Char(36)
   avatar      String?   @default("") @db.VarChar(100)
   createBy    String?   @default("") @db.VarChar(64)
   createTime  DateTime?
   delFlag     String?   @default("0") @db.Char(1)
-  deptId      Int?
+  deptId      String?   @db.Char(36)
   email       String?   @default("") @db.VarChar(50)
   loginDate   DateTime?
   loginIp     String?   @default("") @db.VarChar(128)
-  nickName    String    @db.VarChar(30)
+  nickName    String?    @db.VarChar(30)
   password    String?   @default("") @db.VarChar(100)
   phonenumber String?   @default("") @db.VarChar(11)
   remark      String?   @db.VarChar(500)
@@ -43,9 +43,9 @@ model SysUser {
 }
 
 model SysRole {
-  roleId            Int       @id @default(autoincrement())
+  roleId            String    @id @default(dbgenerated("(UUID())")) @db.Char(36)
   createBy          String?   @default("") @db.VarChar(64)
-  createTime        DateTime?
+  createTime        DateTime  @default(now())
   dataScope         String?   @default("4") @db.Char(4)
   delFlag           String?   @default("0") @db.Char(1)
   deptCheckStrictly Boolean?  @default(true)
@@ -56,7 +56,7 @@ model SysRole {
   roleSort          Int
   status            String    @db.Char(1)
   updateBy          String?   @default("") @db.VarChar(64)
-  updateTime        DateTime?
+  updateTime        DateTime  @updatedAt
   depts             SysDept[] @relation("sys_dept_to_sys_role")
   menus             SysMenu[] @relation("sys_menu_to_sys_role")
   users             SysUser[] @relation("sys_role_to_sys_user")
@@ -65,9 +65,9 @@ model SysRole {
 }
 
 model SysMenu {
-  menuId     Int       @id @default(autoincrement())
+  menuId     String    @id @default(dbgenerated("(UUID())")) @db.Char(36)
   menuName   String    @db.VarChar(50)
-  parentId   Int?
+  parentId   String?   @db.Char(36)
   parentMenu SysMenu?  @relation("menuParentMenu", fields: [parentId], references: [menuId])
   childMenu  SysMenu[] @relation("menuParentMenu")
   orderNum   Int?      @default(0)
@@ -82,9 +82,9 @@ model SysMenu {
   perms      String?   @db.VarChar(100)
   icon       String?   @default("#") @db.VarChar(100)
   createBy   String?   @default("") @db.VarChar(64)
-  createTime DateTime?
+  createTime DateTime? @default(now())
   updateBy   String?   @default("") @db.VarChar(64)
-  updateTime DateTime?
+  updateTime DateTime  @updatedAt
   remark     String?   @default("") @db.VarChar(500)
   roles      SysRole[] @relation("sys_menu_to_sys_role")
 
@@ -92,8 +92,8 @@ model SysMenu {
 }
 
 model SysDept {
-  deptId     Int       @id @default(autoincrement())
-  parentId   Int?
+  deptId     String    @id @default(dbgenerated("(UUID())")) @db.Char(36)
+  parentId   String?   @db.Char(36)
   parentDept SysDept?  @relation("deptParentDept", fields: [parentId], references: [deptId])
   childDept  SysDept[] @relation("deptParentDept")
   ancestors  String    @default("") @db.VarChar(50)
@@ -105,9 +105,9 @@ model SysDept {
   status     String?   @default("0") @db.Char(1)
   delFlag    String?   @default("0") @db.Char(1)
   createBy   String?   @default("") @db.VarChar(64)
-  createTime DateTime?
+  createTime DateTime? @default(now())
   updateBy   String?   @default("") @db.VarChar(64)
-  updateTime DateTime?
+  updateTime DateTime? @updatedAt
   users      SysUser[]
   roles      SysRole[] @relation("sys_dept_to_sys_role")
 
@@ -115,15 +115,15 @@ model SysDept {
 }
 
 model SysPost {
-  postId     Int       @id @default(autoincrement())
+  postId     String    @id @default(dbgenerated("(UUID())")) @db.Char(36)
   postCode   String    @unique @db.VarChar(64)
   postName   String    @db.VarChar(50)
   postSort   Int
   status     String    @db.Char(1)
   createBy   String?   @default("") @db.VarChar(64)
-  createTime DateTime?
+  createTime DateTime? @default(now())
   updateBy   String?   @default("") @db.VarChar(64)
-  updateTime DateTime?
+  updateTime DateTime? @updatedAt
   remark     String?   @db.VarChar(500)
   users      SysUser[] @relation("sys_post_to_sys_user")
 

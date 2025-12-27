@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 import { UsersService } from 'src/users/users.service';
 import { SharedService } from 'src/shared/shared.service';
 import { RegisterDto } from './dto';
+import { PrismaService } from 'src/shared/prisma/prisma.service';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +15,7 @@ export class AuthService {
     private usersService: UsersService,
     private configService: ConfigService,
     private sharedService: SharedService,
+    private prismaService: PrismaService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -34,7 +37,26 @@ export class AuthService {
 
   // 注册
   async register(dto: RegisterDto): Promise<void> {
-    console.log('zhuce===');
+    console.log('zhuce===>>', dto);
+    try {
+      const result = await this.prismaService.sysUser.create({
+      data: {
+        userName: dto.username || '',
+        password: dto.password || '',
+        nickName: dto.nickName ?? '',
+        // Not including 'captcha' as likely not required in table, omit if not needed
+        },
+      });
+      console.log('result===>>', result);
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        throw new BadRequestException('用户名已存在')
+      }
+      throw e
+    }
   }
 
   /**
